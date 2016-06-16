@@ -1,12 +1,12 @@
-var NwBuilder = require('nw-builder');
+var NwBuilder = require('nwjs-builder');
 
 function toCamelcase(str) {
   return str.replace(/\_+([a-z])/g, function (x, chr) { return chr.toUpperCase(); });
 }
 
 function addPlatform(opts, p){
-  var ps = opts['platforms'] = opts['platforms'] || [];
-  if( ps.indexOf(p) === -1 ) ps.push(p);
+  var ps = opts['platforms'] = opts['platforms'] || '';
+  if( ps.indexOf(p) === -1 ) ps + ',' + p;
 }
 
 module.exports = function(grunt) {
@@ -67,15 +67,10 @@ module.exports = function(grunt) {
 
     });
     nwOptions.files = this.filesSrc;
-    
-    // create and run nwbuilder
-    var nw = new NwBuilder(nwOptions);
 
-    nw.on('log',function (log) {
-      grunt.log.writeln(log);
-    });
+    // Run nwbuilder
 
-    nw.build(function(err) {
+    NwBuilder.commands.nwbuild(this.filesSrc, nwOptions, function(err) {
       if(err) {
         grunt.fail.fatal(err);
       } else {
